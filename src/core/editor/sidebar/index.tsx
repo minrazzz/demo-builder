@@ -24,9 +24,7 @@ const EditorSidebar = () => {
             "mt-[73.6px] w-16 z-[80] shadow-none p-0 border-r-[2px] border-r-gray-100 focus:outline-none outline-none transition-all overflow-hidden",
             { hidden: state?.editor?.previewMode }
           )}
-        >
-          <TabList />
-        </SheetContent>
+        ></SheetContent>
         <SheetContent
           showX={false}
           side={"right"}
