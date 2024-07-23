@@ -1,13 +1,19 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useEditor } from "@/provider/editor-provider";
+import { defaultClassName, EditorBtns } from "@/utils/constants";
 // import { useEditor } from "@/providers/editor/editor-provider";
-import clsx from "clsx";
 import { EyeOff } from "lucide-react";
 import { useEffect } from "react";
+import Recursive from "./editor-child-components/Recursive";
 // import Recursive from "./editor-child-components/Recursive";
 
 const EditorComponent = ({ liveMode }: { liveMode?: boolean }) => {
   const { state, dispatch } = useEditor();
+
+  console.log(state);
+
+  const tag = state?.editor?.details?.tag;
 
   useEffect(() => {
     if (liveMode) {
@@ -30,11 +36,19 @@ const EditorComponent = ({ liveMode }: { liveMode?: boolean }) => {
     dispatch({ type: "TOGGLE_LIVE_MODE" });
   };
 
-  console.log(state?.editor?.components);
+  const handleOnDrop = (e: React.DragEvent) => {
+    e.stopPropagation();
+    const componentType = e.dataTransfer.getData("componentType") as EditorBtns;
+    console.log(componentType);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
 
   return (
     <div
-      className={clsx(
+      className={cn(
         "use-automation-zoom-in h-full  mr-[385px] bg-background transition-all rounded-md  border",
         {
           "!p-0 !mr-0":
@@ -44,7 +58,8 @@ const EditorComponent = ({ liveMode }: { liveMode?: boolean }) => {
           "w-full": state.editor.device === "Desktop",
         }
       )}
-      onClick={handleClick}
+      onDrop={(e) => handleOnDrop(e)}
+      onDragOver={handleDragOver}
     >
       {state.editor.previewMode && state.editor.liveMode && (
         <Button
@@ -56,12 +71,11 @@ const EditorComponent = ({ liveMode }: { liveMode?: boolean }) => {
           <EyeOff className="group-hover:stroke-white" />
         </Button>
       )}
-      {/* {Array.isArray(state.editor.elements) &&
-        state.editor.elements.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
-        ))} */}
+
+      {state?.editor?.components?.map((elements) => {
+        return <Recursive element={elements} key={elements?.id} />;
+      })}
     </div>
   );
 };
-
 export default EditorComponent;

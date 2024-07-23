@@ -5,12 +5,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Tabs } from "@/components/ui/tabs";
+import { Tabs, TabsList } from "@/components/ui/tabs";
 
 import clsx from "clsx";
 
 import { TabsContent } from "@radix-ui/react-tabs";
 import { useEditor } from "@/provider/editor-provider";
+import ComponentsTab from "./tabs/components-tabs";
+import TabList from "./tabs";
+import SettingsTab from "./tabs/SettingsTab";
 
 const EditorSidebar = () => {
   const { state, dispatch } = useEditor();
@@ -24,7 +27,9 @@ const EditorSidebar = () => {
             "mt-[73.6px] w-16 z-[80] shadow-none p-0 border-r-[2px] border-r-gray-100 focus:outline-none outline-none transition-all overflow-hidden",
             { hidden: state?.editor?.previewMode }
           )}
-        ></SheetContent>
+        >
+          <TabList />
+        </SheetContent>
         <SheetContent
           showX={false}
           side={"right"}

@@ -1,13 +1,15 @@
 import { createContext, Dispatch, useContext, useReducer } from "react";
 import { EditorAction } from "./editor-action";
+import { EditorBtns } from "@/utils/constants";
 
 export type DeviceTypes = "Desktop" | "Mobile" | "Tablet";
 
 export interface ChildModel {
   id?: string;
-  name?: string;
+  name?: EditorBtns;
   tag?: string;
-  atrr?: {
+
+  attr?: {
     class?: string;
     href?: string;
   };
@@ -43,16 +45,26 @@ export type EditorState = {
   history: HistoryState;
 };
 
-const initialEditorState: EditorState["editor"] = {
-  details: {
-    name: "",
-    tag: "body",
-    attr: {
-      class: "",
-    },
-    child: [],
+const details = {
+  name: "body",
+  tag: "body",
+  attr: {
+    class: "",
   },
-  components: [] as ChildModel[],
+  child: [],
+};
+
+const initialEditorState: EditorState["editor"] = {
+  details,
+  components: [
+    {
+      id: "",
+      name: details.name,
+      tag: details?.tag,
+      attr: details?.attr,
+      child: [],
+    },
+  ] as ChildModel[],
   selectedElement: {} as ChildModel,
   device: "Desktop",
   previewMode: false,
@@ -78,6 +90,7 @@ const addAnElement = (
       "You sent the wrong action type to the Add Element editor State"
     );
   }
+
   return editorArray?.map((item) => {
     if (
       item?.id === action?.payload?.containerId &&
@@ -144,8 +157,16 @@ const editorReducer = (
 ): EditorState => {
   switch (action.type) {
     case "ADD_ELEMENT": {
+      const addedBodyChild = [
+        ...state.editor.details.child,
+        { c: action?.payload?.elementDetails?.name as string },
+      ];
       const addedEditorState = {
         ...state.editor,
+        details: {
+          ...state.editor.details,
+          child: addedBodyChild,
+        },
         components: addAnElement(state.editor.components, action),
       };
       const updatedHistory = [
@@ -155,6 +176,7 @@ const editorReducer = (
 
       const newEditorState = {
         ...state,
+
         editor: addedEditorState,
         history: {
           ...state.history,
@@ -174,13 +196,7 @@ const editorReducer = (
         elements: updatedElements,
         selectedElement: UpdatedElementIsSelected
           ? action.payload.elementDetails
-          : {
-              id: "",
-              content: [],
-              name: "",
-              styles: {},
-              type: null,
-            },
+          : {},
       };
 
       const updatedHistoryWithUpdate = [
